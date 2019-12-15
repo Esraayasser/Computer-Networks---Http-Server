@@ -48,7 +48,7 @@ namespace HTTPServer
         // Mirna
         public bool ParseRequest()
         {
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
 
             //TODO: parse the receivedRequest using the \r\n delimeter   
             

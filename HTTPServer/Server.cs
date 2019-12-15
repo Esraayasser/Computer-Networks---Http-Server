@@ -88,9 +88,7 @@ namespace HTTPServer
             try
             {
                 //TODO: check for bad request 
-                request.ParseRequest();
                 //TODO: map the relativeURI in request to get the physical path of the resource.
-
                 //TODO: check for redirect
 
                 //TODO: check file exists
