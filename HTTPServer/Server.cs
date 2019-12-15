@@ -36,31 +36,45 @@ namespace HTTPServer
         public void HandleConnection(object obj) 
         {
             // TODO: Create client socket 
+            Socket clientSocket = serverSocket.Accept();
+
             // set client socket ReceiveTimeout = 0 to indicate an infinite time-out period
-            
+            clientSocket.ReceiveTimeout = 0;
+
             // TODO: receive requests in while true until remote client closes the socket.
             while (true)
             {
                 try
                 {
                     // TODO: Receive request
+                    byte []requestReceived = new byte[5000];
+                    int receivedBytesLength = serverSocket.Receive(requestReceived); //check meen elly bey recieve, server socket wala client socket
 
                     // TODO: break the while loop if receivedLen==0
+                    if (receivedBytesLength == 0)
+                        break;
 
                     // TODO: Create a Request object using received request string
+                    string requestString = Encoding.ASCII.GetString(requestReceived);
+                    Request requestOfClient = new Request(requestString);
 
                     // TODO: Call HandleRequest Method that returns the response
+                    Response responseOfServer = HandleRequest(requestOfClient);
 
                     // TODO: Send Response back to client
-
+                    byte[] responseByteArray = new byte[responseOfServer.ResponseString.Length];
+                    responseByteArray = Encoding.ASCII.GetBytes(responseOfServer.ResponseString);
+                    clientSocket.Send(responseByteArray);
                 }
                 catch (Exception ex)
                 {
                     // TODO: log exception using Logger class
+                    Logger.LogException(ex);
                 }
             }
 
             // TODO: close client socket
+            clientSocket.Close();
         }
 
         // Awad
@@ -93,7 +107,8 @@ namespace HTTPServer
         private string GetRedirectionPagePathIFExist(string relativePath)
         {
             // using Configuration.RedirectionRules return the redirected page path if exists else returns empty
-            
+            if (Configuration.RedirectionRules.ContainsKey(relativePath))
+                return Configuration.RedirectionRules[relativePath];
             return string.Empty;
         }
 
