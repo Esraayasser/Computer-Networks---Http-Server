@@ -48,10 +48,10 @@ namespace HTTPServer
         // Mirna
         public bool ParseRequest()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
 
             //TODO: parse the receivedRequest using the \r\n delimeter   
-
+            
             // check that there is atleast 3 lines: Request line, Host Header, Blank line (usually 4 lines with the last empty line for empty content)
 
             // Parse Request line
@@ -59,12 +59,37 @@ namespace HTTPServer
             // Validate blank line exists
 
             // Load header lines into HeaderLines dictionary
+            return true;
         }
 
         // Esraa
         private bool ParseRequestLine()
         {
-            throw new NotImplementedException();
+            string[] requestLine_parts = requestString.Split(' ');
+            if (requestLine_parts[0] == "GET")
+                method = RequestMethod.GET;
+            else if (requestLine_parts[0] == "POST")
+                method = RequestMethod.POST;
+            else if (requestLine_parts[0] == "HEAD")
+                method = RequestMethod.HEAD;
+            else
+                return false;
+
+            if (ValidateIsURI(requestLine_parts[1]))
+                relativeURI = requestLine_parts[1];
+            else
+                return false;
+
+            if (requestLine_parts[2] == "HTTP09")
+                httpVersion = HTTPVersion.HTTP09;
+            else if (requestLine_parts[2] == "HTTP10")
+                httpVersion = HTTPVersion.HTTP10;
+            else if (requestLine_parts[2] == "HTTP11")
+                httpVersion = HTTPVersion.HTTP11;
+            else
+                return false;
+
+            return true;
         }
 
         private bool ValidateIsURI(string uri)

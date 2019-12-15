@@ -16,7 +16,10 @@ namespace HTTPServer
         public Server(int portNumber, string redirectionMatrixPath)
         {
             //TODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
+            this.LoadRedirectionRules("redirectionRules.txt");
             //TODO: initialize this.serverSocket
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverSocket.Bind(new IPEndPoint(IPAddress.Any, portNumber));
         }
 
         // Mirna
@@ -85,7 +88,7 @@ namespace HTTPServer
             try
             {
                 //TODO: check for bad request 
-
+                request.ParseRequest();
                 //TODO: map the relativeURI in request to get the physical path of the resource.
 
                 //TODO: check for redirect
@@ -128,11 +131,21 @@ namespace HTTPServer
             try
             {
                 // TODO: using the filepath paramter read the redirection rules from file 
-                // then fill Configuration.RedirectionRules dictionary 
+                if (File.Exists(filePath))
+                {
+                    // then fill Configuration.RedirectionRules dictionary 
+                    using (StreamReader sr = File.OpenText(filePath))
+                    {
+                        string s = "";
+                        while ((s = sr.ReadLine()) != null)
+                            Configuration.RedirectionRules.Add(s.Split(',')[0], s.Split(',')[1]);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 // TODO: log exception using Logger class
+                Logger.LogException(ex);
                 Environment.Exit(1);
             }
         }
