@@ -22,9 +22,20 @@ namespace HTTPServer
         static void CreateRedirectionRulesFile()
         {
             // TODO: Create file named redirectionRules.txt
-            // each line in the file specify a redirection rule
-            // example: "aboutus.html,aboutus2.html"
-            // means that when making request to aboustus.html,, it redirects me to aboutus2
+            string fileName = "redirectionRules.txt";
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+            else
+            {
+                using (FileStream fs = File.Create(fileName))
+                {
+                    // each line in the file specify a redirection rule
+                    // example: "aboutus.html,aboutus2.html"
+                    // means that when making request to aboustus.html,, it redirects me to aboutus2
+                    Byte[] redirectionRule1 = new UTF8Encoding(true).GetBytes("aboutus.html,aboutus2.html");
+                    fs.Write(redirectionRule1, 0, redirectionRule1.Length);
+                }
+            }
         }
          
     }
