@@ -106,7 +106,13 @@ namespace HTTPServer
         // Mohie
         private bool ValidateBlankLine()
         {
-            throw new NotImplementedException();
+            string[] stringSeparators = new string[] { "\r\n" };
+            string[] lines = requestString.Split(stringSeparators, StringSplitOptions.None);         
+            foreach(string line in lines) {
+                if (line == string.Empty)
+                    return true;
+            }
+            return false;
         }
 
     }
