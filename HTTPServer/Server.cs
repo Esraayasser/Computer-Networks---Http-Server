@@ -117,10 +117,23 @@ namespace HTTPServer
         private string LoadDefaultPage(string defaultPageName)
         {
             string filePath = Path.Combine(Configuration.RootPath, defaultPageName);
-            // TODO: check if filepath not exist log exception using Logger class and return empty string
-            
+            // TODO: check if filepath not exist log exception using Logger class and return empty string     
             // else read file and return its content
-            return string.Empty;
+
+            try {
+                string content = "";
+                using (StreamReader sr = File.OpenText(filePath)) {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                        content += s;
+                }
+                return content;
+            }
+
+            catch(Exception ex) {
+                Logger.LogException(ex);
+                return string.Empty;
+            }
         }
 
         // Esraa
