@@ -55,7 +55,7 @@ namespace HTTPServer
                 header += headerLine;
             }
 
-            // TODO: Create the respons string
+            // TODO: Create the response string
             responseString = statusLine + header + "\r\n" + content;
         }
 
