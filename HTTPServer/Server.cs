@@ -26,12 +26,16 @@ namespace HTTPServer
         public void StartServer()
         {
             // TODO: Listen to connections, with large backlog.
-
+            serverSocket.Listen(1000);
             // TODO: Accept connections in while loop and start a thread for each connection on function "Handle Connection"
             while (true)
             {
                 //TODO: accept connections and start thread for each accepted connection.
+                Socket clientSocket = this.serverSocket.Accept();
+                Console.WriteLine("New client accepted: {0}", clientSocket.RemoteEndPoint);
 
+                Thread newThread = new Thread(new ParameterizedThreadStart(HandleConnection));
+                newThread.Start(clientSocket);
             }
         }
 
