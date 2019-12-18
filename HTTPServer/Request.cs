@@ -78,7 +78,7 @@ namespace HTTPServer
                 return false;
 
             if (ValidateIsURI(requestLine_parts[1]))
-                relativeURI = requestLine_parts[1];
+                relativeURI = requestLine_parts[1].Split('/')[1];
             else
                 return false;
 

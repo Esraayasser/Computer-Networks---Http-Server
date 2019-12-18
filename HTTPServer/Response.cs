@@ -64,8 +64,8 @@ namespace HTTPServer
         private string GetStatusLine(StatusCode code)
         {
             // TODO: Create the response status line and return it
-            string codeMsg = Enum.GetName(typeof(StatusCode), code);
-            string  statusLine = Configuration.ServerHTTPVersion + " " + code.ToString() + " " + codeMsg + "\r\n";
+            int statusCode = (int)code;
+            string  statusLine = Configuration.ServerHTTPVersion + " " + statusCode.ToString() + " " + code + "\r\n";
             return statusLine;
         }
     }

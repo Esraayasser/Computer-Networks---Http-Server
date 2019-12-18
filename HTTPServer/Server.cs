@@ -16,6 +16,7 @@ namespace HTTPServer
         public Server(int portNumber, string redirectionMatrixPath)
         {
             //TODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
+            Configuration.RedirectionRules = new Dictionary<string, string>();
             this.LoadRedirectionRules("redirectionRules.txt");
             //TODO: initialize this.serverSocket
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -55,7 +56,7 @@ namespace HTTPServer
                 {
                     // TODO: Receive request
                     byte []requestReceived = new byte[5000];
-                    int receivedBytesLength = serverSocket.Receive(requestReceived); //check meen elly bey recieve, server socket wala client socket
+                    int receivedBytesLength = clientSocket.Receive(requestReceived); 
 
                     // TODO: break the while loop if receivedLen==0
                     if (receivedBytesLength == 0)
@@ -87,7 +88,6 @@ namespace HTTPServer
         // Awad
         Response HandleRequest(Request request)
         {
-            throw new NotImplementedException();
             string content;
             StatusCode code;
             Response FinalResponse;
@@ -113,7 +113,7 @@ namespace HTTPServer
                     FinalResponse = new Response(code, "text/html", content, Redirect);
                     return FinalResponse;
                 }
-              
+
                 //TODO: check file exists
                 string filePath = Path.Combine(Configuration.RootPath, request.relativeURI);
                 if (!File.Exists(filePath))
@@ -135,6 +135,7 @@ namespace HTTPServer
             {
                 // TODO: log exception using Logger class
                 // TODO: in case of exception, return Internal Server Error.
+                Logger.LogException(ex);
                 code = StatusCode.InternalServerError;
                 content = Configuration.InternalErrorDefaultPageName;
                 FinalResponse = new Response(code, "text/html", content, null);
