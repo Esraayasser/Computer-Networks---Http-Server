@@ -43,7 +43,7 @@ namespace HTTPServer
         public void HandleConnection(object obj) 
         {
             // TODO: Create client socket 
-            Socket clientSocket = serverSocket.Accept();
+            Socket clientSocket = (Socket)obj;
 
             // set client socket ReceiveTimeout = 0 to indicate an infinite time-out period
             clientSocket.ReceiveTimeout = 0;
