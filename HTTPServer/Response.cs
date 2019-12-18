@@ -30,14 +30,33 @@ namespace HTTPServer
         List<string> headerLines = new List<string>();
 
         // Mohie
-        public Response(StatusCode code, string contentType, string content, string redirectoinPath)
+        public Response(StatusCode code, string contentType, string content, string redirectionPath)
         {
-            throw new NotImplementedException();
-            // TODO: Add headlines (Content-Type, Content-Length,Date, [location if there is redirection])
+            string codeMsg = Enum.GetName(typeof(StatusCode), code); // The actual message of the status, because code gives us the number
+            string statusLine = "HTTP\\1.0 " + code.ToString() + " " + codeMsg + "\r\n"; // GetStatusLine(code); // Version?
+            
+            // TODO: Add headlines (Content-Type, Content-Length, Date, [location if there is redirection])
+            string dateHeader = "Date: " + DateTime.Now.ToString() + "\r\n";
+            headerLines.Add(dateHeader);
 
+            string contentTypeHeader = "Content-Type: " + contentType + "\r\n";
+            headerLines.Add(contentTypeHeader);
 
-            // TODO: Create the request string
+            string contentLengthHeader = "Content-Length" + content.Length.ToString() + "\r\n";
+            headerLines.Add(contentLengthHeader);
 
+            if (code == StatusCode.Redirect) {
+                string locationHeader = "Location: " + redirectionPath + "\r\n";
+                headerLines.Add(locationHeader);
+            }
+
+            string header = "";
+            foreach(string headerLine in headerLines) {
+                header += headerLine;
+            }
+
+            // TODO: Create the response string
+            responseString = statusLine + header + "\r\n" + content;
         }
 
         // Awad

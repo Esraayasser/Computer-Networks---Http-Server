@@ -26,12 +26,16 @@ namespace HTTPServer
         public void StartServer()
         {
             // TODO: Listen to connections, with large backlog.
-
+            serverSocket.Listen(1000);
             // TODO: Accept connections in while loop and start a thread for each connection on function "Handle Connection"
             while (true)
             {
                 //TODO: accept connections and start thread for each accepted connection.
+                Socket clientSocket = this.serverSocket.Accept();
+                Console.WriteLine("New client accepted: {0}", clientSocket.RemoteEndPoint);
 
+                Thread newThread = new Thread(new ParameterizedThreadStart(HandleConnection));
+                newThread.Start(clientSocket);
             }
         }
 
@@ -39,7 +43,7 @@ namespace HTTPServer
         public void HandleConnection(object obj) 
         {
             // TODO: Create client socket 
-            Socket clientSocket = serverSocket.Accept();
+            Socket clientSocket = (Socket)obj;
 
             // set client socket ReceiveTimeout = 0 to indicate an infinite time-out period
             clientSocket.ReceiveTimeout = 0;
@@ -134,10 +138,23 @@ namespace HTTPServer
         private string LoadDefaultPage(string defaultPageName)
         {
             string filePath = Path.Combine(Configuration.RootPath, defaultPageName);
-            // TODO: check if filepath not exist log exception using Logger class and return empty string
-            
+            // TODO: check if filepath not exist log exception using Logger class and return empty string     
             // else read file and return its content
-            return string.Empty;
+
+            try {
+                string content = "";
+                using (StreamReader sr = File.OpenText(filePath)) {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                        content += s;
+                }
+                return content;
+            }
+
+            catch(Exception ex) {
+                Logger.LogException(ex);
+                return string.Empty;
+            }
         }
 
         // Esraa
