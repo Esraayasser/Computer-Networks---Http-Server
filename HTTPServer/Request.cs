@@ -67,7 +67,7 @@ namespace HTTPServer
         // Esraa
         private bool ParseRequestLine()
         {
-            string[] requestLine_parts = requestString.Split(' ');
+            string[] requestLine_parts = requestLines[0].Split(' ');
             if (requestLine_parts[0] == "GET")
                 method = RequestMethod.GET;
             else if (requestLine_parts[0] == "POST")
@@ -82,11 +82,11 @@ namespace HTTPServer
             else
                 return false;
 
-            if (requestLine_parts[2] == "HTTP09")
+            if (requestLine_parts[2] == "HTTP/0.9")
                 httpVersion = HTTPVersion.HTTP09;
-            else if (requestLine_parts[2] == "HTTP10")
+            else if (requestLine_parts[2] == "HTTP/1.0")
                 httpVersion = HTTPVersion.HTTP10;
-            else if (requestLine_parts[2] == "HTTP11")
+            else if (requestLine_parts[2] == "HTTP/1.1")
                 httpVersion = HTTPVersion.HTTP11;
             else
                 return false;
