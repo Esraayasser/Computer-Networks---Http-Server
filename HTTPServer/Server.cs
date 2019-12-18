@@ -26,12 +26,16 @@ namespace HTTPServer
         public void StartServer()
         {
             // TODO: Listen to connections, with large backlog.
-
+            serverSocket.Listen(1000);
             // TODO: Accept connections in while loop and start a thread for each connection on function "Handle Connection"
             while (true)
             {
                 //TODO: accept connections and start thread for each accepted connection.
+                Socket clientSocket = this.serverSocket.Accept();
+                Console.WriteLine("New client accepted: {0}", clientSocket.RemoteEndPoint);
 
+                Thread newThread = new Thread(new ParameterizedThreadStart(HandleConnection));
+                newThread.Start(clientSocket);
             }
         }
 
@@ -39,8 +43,7 @@ namespace HTTPServer
         public void HandleConnection(object obj) 
         {
             // TODO: Create client socket 
-            // cast obj
-            Socket clientSocket = serverSocket.Accept();
+            Socket clientSocket = (Socket)obj;
 
             // set client socket ReceiveTimeout = 0 to indicate an infinite time-out period
             clientSocket.ReceiveTimeout = 0;
@@ -90,7 +93,8 @@ namespace HTTPServer
             Response FinalResponse;
             try
             {
-                //TODO: check for bad request  // PARSE REQUEST
+
+                //TODO: check for bad request 
                 bool GoodResponse = request.ParseRequest();
                 if (GoodResponse == false)
                 {
@@ -109,6 +113,7 @@ namespace HTTPServer
                     FinalResponse = new Response(code, "text/html", content, Redirect);
                     return FinalResponse;
                 }
+              
                 //TODO: check file exists
                 string filePath = Path.Combine(Configuration.RootPath, request.relativeURI);
                 if (!File.Exists(filePath))
@@ -120,6 +125,7 @@ namespace HTTPServer
                 }
                 //TODO: read the physical file
                 content = LoadDefaultPage(request.relativeURI);
+
                 // Create OK response
                 code = StatusCode.OK;
                 FinalResponse = new Response(code, "text/html", content, null);

@@ -48,18 +48,20 @@ namespace HTTPServer
         // Mirna
         public bool ParseRequest()
         {
-            throw new NotImplementedException();
-
             //TODO: parse the receivedRequest using the \r\n delimeter   
-            
+            string[] stringSeparators = new string[] { "\r\n" };
+            requestLines = requestString.Split(stringSeparators, StringSplitOptions.None);
             // check that there is atleast 3 lines: Request line, Host Header, Blank line (usually 4 lines with the last empty line for empty content)
-
+            if (requestLines.Length < 4)
+                return false;
             // Parse Request line
-
+            bool validRequest = ParseRequestLine();
             // Validate blank line exists
-
+            validRequest &= ValidateBlankLine();
             // Load header lines into HeaderLines dictionary
-            return true;
+            validRequest &= LoadHeaderLines();
+
+            return validRequest;
         }
 
         // Esraa
@@ -100,14 +102,36 @@ namespace HTTPServer
         // Mirna
         private bool LoadHeaderLines()
         {
-            throw new NotImplementedException();
+            headerLines = new Dictionary<string, string>();
+            bool hostAttribute = false;
+            string[] stringSeparators = new string[] { ": " };
+            for (int i = 1; i < requestLines.Length; i++)
+            {
+                // End of Header Lines
+                if (requestLines[i].Length == 0)
+                    break;
+                // If the Header Line not formatted correctly
+                if (!requestLines[i].Contains(": "))
+                    return false;
+
+                string[] Attributes = requestLines[i].Split(stringSeparators, StringSplitOptions.None);
+                if(Attributes[0] == "Host")
+                {
+                    if (hostAttribute)
+                        return false;
+                    hostAttribute = true;
+                }
+                headerLines[Attributes[0]] = Attributes[1];
+            }
+            return hostAttribute;
         }
 
         // Mohie
         private bool ValidateBlankLine()
         {
             string[] stringSeparators = new string[] { "\r\n" };
-            string[] lines = requestString.Split(stringSeparators, StringSplitOptions.None);         
+            string[] lines = requestString.Split(stringSeparators, StringSplitOptions.None);    
+            // E3mily check en hyzhar empty wykon lessa el-index < Length - 1
             foreach(string line in lines) {
                 if (line == string.Empty)
                     return true;
