@@ -32,9 +32,10 @@ namespace HTTPServer
         // Mohie
         public Response(StatusCode code, string contentType, string content, string redirectionPath)
         {
-            string codeMsg = Enum.GetName(typeof(StatusCode), code); // The actual message of the status, because code gives us the number
-            string statusLine = "HTTP\\1.0 " + code.ToString() + " " + codeMsg + "\r\n"; // GetStatusLine(code); // Version?
-            
+            // The actual message of the status, because code gives us the number
+            string statusLine = GetStatusLine(code); // GetStatusLine(code); // Version?
+            // version fel config
+
             // TODO: Add headlines (Content-Type, Content-Length, Date, [location if there is redirection])
             string dateHeader = "Date: " + DateTime.Now.ToString() + "\r\n";
             headerLines.Add(dateHeader);
@@ -63,8 +64,8 @@ namespace HTTPServer
         private string GetStatusLine(StatusCode code)
         {
             // TODO: Create the response status line and return it
-            string statusLine = string.Empty;
-
+            string codeMsg = Enum.GetName(typeof(StatusCode), code);
+            string  statusLine = Configuration.ServerHTTPVersion + " " + code.ToString() + " " + codeMsg + "\r\n";
             return statusLine;
         }
     }

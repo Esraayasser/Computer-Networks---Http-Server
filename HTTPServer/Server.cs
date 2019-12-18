@@ -64,7 +64,7 @@ namespace HTTPServer
                     // TODO: Create a Request object using received request string
                     string requestString = Encoding.ASCII.GetString(requestReceived);
                     Request requestOfClient = new Request(requestString);
-
+                    
                     // TODO: Call HandleRequest Method that returns the response
                     Response responseOfServer = HandleRequest(requestOfClient);
 
@@ -93,35 +93,52 @@ namespace HTTPServer
             Response FinalResponse;
             try
             {
+
                 //TODO: check for bad request 
                 bool GoodResponse = request.ParseRequest();
                 if (GoodResponse == false)
                 {
                     code = StatusCode.BadRequest;
                     content = LoadDefaultPage(Configuration.BadRequestDefaultPageName);
-                    FinalResponse = new Response(code, "text/html", null, null);
+                    FinalResponse = new Response(code, "text/html", content, null);
                     return FinalResponse;
                 }
                 //TODO: map the relativeURI in request to get the physical path of the resource.
-                //TODO: check for redirect
+                //TODO: check for redirect // a2ra page el redir
                 string Redirect = GetRedirectionPagePathIFExist(request.relativeURI);
-                if (Redirect != string.Empty){
+                if (Redirect != string.Empty)
+                {
                     code = StatusCode.Redirect;
                     content = LoadDefaultPage(Configuration.RedirectionDefaultPageName);
-                    FinalResponse = new Response(code, "text/html", content, request.relativeURI);
+                    FinalResponse = new Response(code, "text/html", content, Redirect);
                     return FinalResponse;
                 }
-
+              
                 //TODO: check file exists
-
+                string filePath = Path.Combine(Configuration.RootPath, request.relativeURI);
+                if (!File.Exists(filePath))
+                {
+                    code = StatusCode.NotFound;
+                    content = LoadDefaultPage(Configuration.NotFoundDefaultPageName);
+                    FinalResponse = new Response(code, "text/html", content, null);
+                    return FinalResponse;
+                }
                 //TODO: read the physical file
-                
+                content = LoadDefaultPage(request.relativeURI);
+
                 // Create OK response
+                code = StatusCode.OK;
+                FinalResponse = new Response(code, "text/html", content, null);
+                return FinalResponse;
             }
             catch (Exception ex)
             {
                 // TODO: log exception using Logger class
-                // TODO: in case of exception, return Internal Server Error. 
+                // TODO: in case of exception, return Internal Server Error.
+                code = StatusCode.InternalServerError;
+                content = Configuration.InternalErrorDefaultPageName;
+                FinalResponse = new Response(code, "text/html", content, null);
+                return FinalResponse;
             }
         }
 
