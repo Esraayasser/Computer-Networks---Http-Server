@@ -85,16 +85,33 @@ namespace HTTPServer
         {
             throw new NotImplementedException();
             string content;
+            StatusCode code;
+            Response FinalResponse;
             try
             {
                 //TODO: check for bad request 
+                bool GoodResponse = request.ParseRequest();
+                if (GoodResponse == false)
+                {
+                    code = StatusCode.BadRequest;
+                    content = LoadDefaultPage(Configuration.BadRequestDefaultPageName);
+                    FinalResponse = new Response(code, "text/html", null, null);
+                    return FinalResponse;
+                }
                 //TODO: map the relativeURI in request to get the physical path of the resource.
                 //TODO: check for redirect
+                string Redirect = GetRedirectionPagePathIFExist(request.relativeURI);
+                if (Redirect != string.Empty){
+                    code = StatusCode.Redirect;
+                    content = LoadDefaultPage(Configuration.RedirectionDefaultPageName);
+                    FinalResponse = new Response(code, "text/html", content, request.relativeURI);
+                    return FinalResponse;
+                }
 
                 //TODO: check file exists
 
                 //TODO: read the physical file
-
+                
                 // Create OK response
             }
             catch (Exception ex)
